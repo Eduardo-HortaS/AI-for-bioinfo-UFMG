@@ -1,0 +1,11 @@
+[project]
+name = "svm-localisation"
+version = "1.0"
+description = "Predict protein subcellular localisation with a support vector machine"
+requires-python = "==3.12.*"
+dependencies = [
+    "ipykernel",
+    "matplotlib",
+    "numpy",
+    "scikit-learn==1.9.1",
+]

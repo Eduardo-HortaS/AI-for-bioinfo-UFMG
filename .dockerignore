@@ -1,0 +1,11 @@
+.git
+.github
+tools
+**/.venv
+**/__pycache__
+**/.ipynb_checkpoints
+modules/*/out
+modules/03-nanogpt/nanogpt/out-*
+modules/03-nanogpt/nanogpt/data/*/*.bin
+modules/03-nanogpt/nanogpt/data/*/meta.pkl
+dev_docs

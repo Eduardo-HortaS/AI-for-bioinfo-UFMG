@@ -1,0 +1,21 @@
+[project]
+name = "nanogpt-lesson"
+version = "1.0"
+description = "Train a tiny GPT on Shakespeare and on protein sequences"
+requires-python = "==3.12.*"
+dependencies = [
+    "ipykernel",
+    "matplotlib",
+    "numpy",
+    "requests",  # imported by nanogpt/data/shakespeare_char/prepare.py
+    "tiktoken",  # imported by nanogpt/sample.py, unused for character-level models
+    "torch==2.15.0",
+]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

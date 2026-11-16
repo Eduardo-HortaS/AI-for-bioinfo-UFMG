@@ -1,0 +1,9 @@
+[project]
+name = "lab-jupyter"
+version = "1.0"
+description = "JupyterLab, with Jupytext so the .py lessons open as notebooks"
+requires-python = "==3.12.*"
+dependencies = [
+    "jupyterlab",
+    "jupytext",
+]

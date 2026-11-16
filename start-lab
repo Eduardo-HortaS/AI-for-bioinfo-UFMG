@@ -1,0 +1,22 @@
+#!/bin/sh
+# Start the lab in the current directory. On the first run, copy the lessons
+# here so that edits and training outputs stay on the host, and point each
+# module's .venv at its pre-built environment so `uv run lesson.py` works.
+set -eu
+
+if [ ! -d modules ]; then
+    cp -r /opt/lab/modules .
+    for dir in modules/*/; do
+        ln -s "/opt/lab/envs/$(basename "$dir")" "$dir.venv" || true
+    done
+fi
+
+# Docker publishes the port from inside the container, so Jupyter has to
+# listen on all interfaces there. Apptainer shares the host network, where
+# that would expose it to everyone on a shared machine.
+ip=0.0.0.0
+if [ -n "${APPTAINER_CONTAINER:-}" ]; then
+    ip=127.0.0.1
+fi
+
+exec jupyter lab --ip="$ip" --port=8888 --no-browser "$@"
