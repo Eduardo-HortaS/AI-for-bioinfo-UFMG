@@ -19,4 +19,6 @@ if [ -n "${APPTAINER_CONTAINER:-}" ]; then
     ip=127.0.0.1
 fi
 
-exec jupyter lab --ip="$ip" --port=8888 --no-browser "$@"
+# The port is left to Jupyter: 8888 unless JUPYTER_PORT or --port says
+# otherwise, and the next free one if it is taken.
+exec jupyter lab --ip="$ip" --no-browser "$@"
