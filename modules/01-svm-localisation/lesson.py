@@ -196,9 +196,11 @@ print(f"linear SVM, test accuracy: {linear.score(X_test, y_test):.3f}")
 # typical laptop.
 
 # %%
+C_values = [0.1, 1, 10]
+gamma_values = [1e-4, 1e-3, 1e-2]
 search = GridSearchCV(
     make_pipeline(StandardScaler(), SVC(kernel="rbf")),
-    param_grid={"svc__C": [0.1, 1, 10], "svc__gamma": [1e-4, 1e-3, 1e-2]},
+    param_grid={"svc__C": C_values, "svc__gamma": gamma_values},
     cv=5,
     n_jobs=-1,
 )
@@ -209,10 +211,33 @@ for params, score in zip(results["params"], results["mean_test_score"]):
     print(f"C={params['svc__C']:<5} gamma={params['svc__gamma']:<7} cross-validated accuracy {score:.3f}")
 print("best:", search.best_params_)
 
+# The grid is searched with C in the outer loop and gamma in the inner one,
+# so the nine scores fold into a C × gamma table.
+scores = results["mean_test_score"].reshape(len(C_values), len(gamma_values))
+best_row, best_col = np.unravel_index(scores.argmax(), scores.shape)
+
+fig, ax = plt.subplots(figsize=(4.5, 3.5))
+im = ax.imshow(scores, cmap="viridis")
+for i in range(len(C_values)):
+    for j in range(len(gamma_values)):
+        ax.text(j, i, f"{scores[i, j]:.3f}", ha="center", va="center",
+                color="black" if scores[i, j] > scores.mean() else "white")
+ax.add_patch(plt.Rectangle((best_col - 0.5, best_row - 0.5), 1, 1, fill=False, edgecolor="red", linewidth=2))
+ax.set_xticks(range(len(gamma_values)), gamma_values)
+ax.set_yticks(range(len(C_values)), C_values)
+ax.set(xlabel="gamma", ylabel="C", title="Cross-validated accuracy")
+fig.colorbar(im, ax=ax)
+fig.tight_layout()
+fig.savefig("out/grid_search.png", dpi=120)
+
 # %% [markdown]
-# Look at the table before moving on. Accuracy should rise and then fall as
-# `gamma` grows. If the best value sits at the edge of the grid, the grid is
-# too narrow and should be extended in that direction.
+# Read the heat map before moving on; the best setting is outlined in red. In
+# each row, accuracy should rise and then fall as `gamma` grows: too small and
+# the boundary is almost flat, too large and it wraps around individual
+# training proteins. Larger `C` helps when `gamma` is small, because it lets
+# the boundary bend more to fit the training data. If the best cell sat on
+# the edge of the grid, the grid would be too narrow and should be extended in
+# that direction.
 
 # %% [markdown]
 # ## How well does it do?
